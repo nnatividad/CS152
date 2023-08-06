@@ -360,8 +360,8 @@ static void yy_fatal_error (yyconst char msg[]  );
 	*yy_cp = '\0'; \
 	(yy_c_buf_p) = yy_cp;
 
-#define YY_NUM_RULES 59
-#define YY_END_OF_BUFFER 60
+#define YY_NUM_RULES 58
+#define YY_END_OF_BUFFER 59
 /* This struct is not used in this scanner,
    but its presence is necessary. */
 struct yy_trans_info
@@ -371,11 +371,11 @@ struct yy_trans_info
 	};
 static yyconst flex_int16_t yy_accept[161] =
     {   0,
-        0,    0,   60,   56,   52,   53,   51,   56,   35,   45,
+        0,    0,   59,   56,   52,   53,   51,   56,   35,   45,
        46,   33,   32,   44,   31,   34,    1,   43,   42,   38,
        56,   39,   55,   47,   48,   56,   55,   55,   55,   55,
        55,   55,   55,   55,   55,   55,   55,   55,    0,    1,
-       57,   49,   40,   37,   36,   41,   55,   55,   55,   55,
+       57,   49,   40,   37,   36,   41,   55,   55,   54,   55,
        55,   55,   55,   19,   55,   55,   55,   55,   55,   13,
        55,   55,   12,   26,   55,   55,   55,   55,   55,    0,
        50,   25,   55,   55,   55,   55,   55,   55,   55,   17,
@@ -1155,7 +1155,7 @@ case YY_STATE_EOF(INITIAL):
 case 54:
 YY_RULE_SETUP
 #line 77 "miniL.lex"
-{printf("NUMBER %s\n", yytext); num_column += yyleng;}
+{printf("Error at line %d, column %d: identifier \"%s\" cannot end with an underscore\n", num_lines, num_column, yytext); exit(-1);}
 	YY_BREAK
 case 55:
 YY_RULE_SETUP
@@ -1174,15 +1174,10 @@ YY_RULE_SETUP
 	YY_BREAK
 case 58:
 YY_RULE_SETUP
-#line 82 "miniL.lex"
-{printf("Error at line %d, column %d: identifier \"%s\" cannot end with an underscore\n", num_lines, num_column, yytext); exit(-1);}
-	YY_BREAK
-case 59:
-YY_RULE_SETUP
-#line 83 "miniL.lex"
+#line 85 "miniL.lex"
 ECHO;
 	YY_BREAK
-#line 1186 "lex.yy.c"
+#line 1181 "lex.yy.c"
 
 	case YY_END_OF_BUFFER:
 		{
@@ -2174,7 +2169,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 83 "miniL.lex"
+#line 85 "miniL.lex"
 
 
 	/* C functions used in lexer */

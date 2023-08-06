@@ -74,12 +74,14 @@ return         {printf("RETURN\n"); num_column += yyleng;}
 \n             {num_column = 1; num_lines++;}
 <<EOF>>        {exit(0);}
 
-{DIGIT}+       {printf("NUMBER %s\n", yytext); num_column += yyleng;}
+{E_ID_2}       {printf("Error at line %d, column %d: identifier \"%s\" cannot end with an underscore\n", num_lines, num_column, yytext); exit(-1);}
 {ID}+          {printf("IDENT %s\n", yytext); num_column += yyleng;}
 
 .                 {printf("Error at line %d, column %d: unrecognized symbol \"%s\"\n", num_lines, num_column, yytext); exit(-1);}
 {E_ID_1}          {printf("Error at line %d, column %d: identifier \"%s\" must begin with a letter\n", num_lines, num_column, yytext); exit(-1);}
-{E_ID_2}          {printf("Error at line %d, column %d: identifier \"%s\" cannot end with an underscore\n", num_lines, num_column, yytext); exit(-1);}
+
+
+
 %%
 	/* C functions used in lexer */
 
