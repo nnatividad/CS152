@@ -1,10 +1,17 @@
     /* cs152-miniL phase2 */
 %{
-void yyerror(const char *msg);
+  #include <stdio.h>
+  #include <stdlib.h>
+  void yyerror(const char *msg);
+  extern int num_lines;
+  extern int num_column;
+  FILE * yyin;
 %}
 
 %union{
   /* put your types here */
+  int num_val;
+  char* id_val;
 }
 
 %error-verbose
