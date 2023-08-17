@@ -14,6 +14,8 @@
   char* id_val;
 }
 
+
+%start prog_start
 %error-verbose
 %locations
 
