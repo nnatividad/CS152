@@ -16,6 +16,7 @@
 
 %error-verbose
 %locations
+%start prog_start
 
 /* %start program */
 
