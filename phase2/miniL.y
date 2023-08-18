@@ -119,6 +119,13 @@ multiplicative_expr: term {printf("multiplicative_exp -> term\n");}
 multiple_exp: expression {printf("multiple_exp -> expression\n");}
 	| expression COMMA multiple_exp {printf("multiple_exp -> expression COMMA multiple_exp\n");}
 	;
+term: var {printf("term -> var\n");}
+	| SUB var {printf("term -> SUB var\n");}
+	| NUMBER {printf("term -> NUMBER\n");}
+	| SUB NUMBER {printf("term -> SUB NUMBER\n");}
+	| L_PAREN expression R_PAREN {printf("term -> L_PAREN expression R_PAREN\n");}
+	| SUB L_PAREN expression R_PAREN {printf("term -> SUB L_PAREN expression R_PAREN\n");}
+	| identifier L_PAREN expressions R_PAREN {printf("term -> identifier L_PAREN expressions R_PAREN\n");};
 
 	
 %% 
