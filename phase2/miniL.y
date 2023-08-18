@@ -3,13 +3,13 @@
   #include <stdio.h>
   #include <stdlib.h>
   void yyerror(const char *msg);
-  extern int num_lines;
-  extern int num_column;
+  extern int currLine;
+  extern int currPos;
   FILE * yyin;
 %}
 
+%error-verbose
 %union{
-  /* put your types here */
   int num_val;
   char* id_val;
 }
@@ -27,7 +27,6 @@
 %left ADD SUB
 %left MULT DIV MOD
 
-%error-verbose
 %locations
 
 /* %start program */
@@ -65,17 +64,34 @@ statements:    /*empty*/ {printf("statements -> epsilon\n");}
         | statement SEMICOLON statements {printf("statements -> statement SEMICOLON statements\n");}
         ;
 
-statement:
-	var ASSIGN expression {printf("statement -> var ASSIGN expression\n");}
+statement: var ASSIGN expression {printf("statement -> var ASSIGN expression\n");}
 	| IF bool_exp THEN statements ENDIF {printf("statement -> IF bool_exp THEN statements ENDIF\n");}
 	| IF bool_exp THEN statements ELSE statements ENDIF {printf("statement -> IF bool_exp THEN statements ELSE statements ENDIF\n");}
 	| WHILE bool_exp BEGINLOOP statements ENDLOOP {printf("statement -> WHILE bool_exp BEINGLOOP statements ENDLOOP\n");}
 	| DO BEGINLOOP statements ENDLOOP WHILE bool_exp {printf("statement -> DO BEGINLOOP statements ENDLOOP WHILE bool_exp\n");}
 	| FOR vars ASSIGN NUMBER SEMICOLON bool_exp SEMICOLON vars ASSIGN expression BEGINLOOP statements ENDLOOP {printf("
-    | READ vars {printf("statement -> READ vars\n");}
+   	| READ vars {printf("statement -> READ vars\n");}
 	| WRITE vars {printf("statement -> WRITE vars\n");}
 	| CONTINUE {printf("statement -> CONTINUE\n");}
-	| RETURN expression {printf("statement -> RETURN expression\n");};
+	| RETURN expression {printf("statement -> RETURN expression\n");}
+	;
+
+bool_exp: relation_and_exp {printf("bool_exp -> relation_and_exp\n");}
+	| relation_and_exp OR bool_exp {printf("bool_exp -> relation_and_exp OR bool_exp\n");}
+	;
+
+relation_and_exp: relation_exp {printf("relation_and_exp -> relation_exp\n");}
+	| relation_exp AND relation_and_exp {printf("relation_and_exp -> relation_exp AND relation_and_exp\n");}
+	;
+
+	relation_exp: expression comp expression {printf("relation_exp -> expression comp expression\n");}
+	| NOT expression comp expression {printf("relation_exp -> NOT expression comp expression\n");}
+	| TRUE {printf("relation_exp -> TRUE\n");}
+	| NOT TRUE {printf("relation_exp -> NOT TRUE\n");}
+	| FALSE {printf("relation_exp -> FALSE\n");}
+	| NOT FALSE {printf("relation_exp -> NOT FALSE\n");}
+	| L_PAREN bool_exp R_PAREN {printf("relation exp -> L_PAREN bool_exp R_PAREN\n");}
+	;
 %% 
 
 int main(int argc, char **argv) {
