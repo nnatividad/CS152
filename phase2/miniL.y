@@ -92,6 +92,35 @@ relation_and_exp: relation_exp {printf("relation_and_exp -> relation_exp\n");}
 	| NOT FALSE {printf("relation_exp -> NOT FALSE\n");}
 	| L_PAREN bool_exp R_PAREN {printf("relation exp -> L_PAREN bool_exp R_PAREN\n");}
 	;
+
+comp: EQ {printf("comp -> EQ\n");}
+	| NEQ {printf("comp -> NEQ\n");}
+	| LT {printf("comp -> LT\n");}
+	| GT {printf("comp -> GTn");}
+	| LTE {printf("comp -> LTE\n");}
+	| GTE {printf("comp -> GTE\n");}
+	;
+
+expression: multiplicative_exp {printf("expression -> multiplicative_exp\n");}
+	| multiplicative_exp ADD expression {printf("expression -> multiplicative_exp ADD expression\n");}
+	| multiplicative_exp SUB expression {printf("expression -> multiplicative_exp SUB expression\n");}
+	;
+
+expressions: /*Epsilon*/ {printf("expressions -> Epsilon\n");}
+	| multiple_exp {printf("expressions -> multiple_exp\n");}
+	;
+
+multiplicative_expr: term {printf("multiplicative_exp -> term\n");}
+	| term MULT multiplicative_exp {printf("multiplicative_exp -> term MULT multiplicative_exp\n");}
+	| term DIV multiplicative_exp {printf("multiplicative_exp -> term DIV multiplicative_exp\n");}
+	| term MOD multiplicative_exp {printf("multiplicative_exp -> term MOD multiplicative_exp\n");}
+	;
+
+multiple_exp: expression {printf("multiple_exp -> expression\n");}
+	| expression COMMA multiple_exp {printf("multiple_exp -> expression COMMA multiple_exp\n");}
+	;
+
+	
 %% 
 
 int main(int argc, char **argv) {
