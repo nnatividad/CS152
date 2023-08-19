@@ -120,21 +120,28 @@ multiple_exp: expression {printf("multiple_exp -> expression\n");}
 	| expression COMMA multiple_exp {printf("multiple_exp -> expression COMMA multiple_exp\n");}
 	;
 term: var {printf("term -> var\n");}
-	| SUB var {printf("term -> SUB var\n");}
 	| NUMBER {printf("term -> NUMBER\n");}
-	| SUB NUMBER {printf("term -> SUB NUMBER\n");}
 	| L_PAREN expression R_PAREN {printf("term -> L_PAREN expression R_PAREN\n");}
-	| SUB L_PAREN expression R_PAREN {printf("term -> SUB L_PAREN expression R_PAREN\n");}
-	| identifier L_PAREN expressions R_PAREN {printf("term -> identifier L_PAREN expressions R_PAREN\n");};
+	| identifier L_PAREN expressions R_PAREN {printf("term -> identifier L_PAREN expressions R_PAREN\n");}
+	;
 
+var: identifier {printf("var -> identifier\n");}
+	| identifier L_SQUARE_BRACKET expression R_SQUARE_BRACKET {printf("var -> identifier L_SQUARE_BRACKET expression R_SQUARE_BRACKET\n");}
+	;
 	
 %% 
 
 int main(int argc, char **argv) {
+	if (argc > 1) {
+        yyin = fopen(argv[1], "r");
+        if (yyin == NULL) {
+            printf("error: %s file error", argv[0]);
+        }
+    }
    yyparse();
    return 0;
 }
 
 void yyerror(const char *msg) {
-    /* implement your error handling */
+    printf("Error at line %d: %s \n", currLine, currPos, msg);
 }
