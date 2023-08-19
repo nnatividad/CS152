@@ -16,8 +16,40 @@
 
 
 %start prog_start
-%token FUNCTION BEGIN_PARAMS END_PARAMS BEGIN_LOCALS END_LOCALS BEGIN_BODY END_BODY INTEGER ARRAY OF IF THEN ENDIF ELSE WHILE DO FOR BEGINLOOP ENDLOOP CONTINUE READ WRITE TRUE FALSE ASSIGN SEMICOLON COLON COMMA L_PAREN R_PAREN L_SQUARE_BRACKET R_SQUARE_BRACKET RETURN
-%token _id_val> IDENT
+%token FUNCTION 
+%token BEGIN_PARAMS 
+%token END_PARAMS 
+%token BEGIN_LOCALS 
+%token END_LOCALS 
+%token BEGIN_BODY 
+%token END_BODY 
+%token INTEGER 
+%token ARRAY 
+%token OF 
+%token IF 
+%token THEN 
+%token ENDIF 
+%token ELSE 
+%token WHILE 
+%token DO 
+%token FOR 
+%token BEGINLOOP 
+%token ENDLOOP 
+%token CONTINUE 
+%token READ 
+%token WRITE 
+%token TRUE 
+%token FALSE 
+%token ASSIGN 
+%token SEMICOLON 
+%token COLON 
+%token COMMA 
+%token L_PAREN 
+%token R_PAREN 
+%token L_SQUARE_BRACKET 
+%token R_SQUARE_BRACKET 
+%token RETURN
+%token <id_val> IDENT
 %token <num_val> NUMBER
 %right ASSIGN
 %left OR
@@ -69,7 +101,6 @@ statement: var ASSIGN expression {printf("statement -> var ASSIGN expression\n")
 	| IF bool_exp THEN statements ELSE statements ENDIF {printf("statement -> IF bool_exp THEN statements ELSE statements ENDIF\n");}
 	| WHILE bool_exp BEGINLOOP statements ENDLOOP {printf("statement -> WHILE bool_exp BEINGLOOP statements ENDLOOP\n");}
 	| DO BEGINLOOP statements ENDLOOP WHILE bool_exp {printf("statement -> DO BEGINLOOP statements ENDLOOP WHILE bool_exp\n");}
-	| FOR vars ASSIGN NUMBER SEMICOLON bool_exp SEMICOLON vars ASSIGN expression BEGINLOOP statements ENDLOOP {printf("
    	| READ vars {printf("statement -> READ vars\n");}
 	| WRITE vars {printf("statement -> WRITE vars\n");}
 	| CONTINUE {printf("statement -> CONTINUE\n");}
