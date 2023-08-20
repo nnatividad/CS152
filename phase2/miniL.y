@@ -80,7 +80,7 @@
         ;
 
  functions:    /*empty*/{printf("functions -> epsilon\n");}
-        | function functions {printf("functions -> function functions\n";}
+        | function functions {printf("functions -> function functions\n";)}
         ;
 
  declarations:        /*empty*/ {printf("declarations -> epsilon\n");}
