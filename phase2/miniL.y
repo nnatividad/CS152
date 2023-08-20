@@ -3,8 +3,8 @@
   #include <stdio.h>
   #include <stdlib.h>
   void yyerror(const char *msg);
-  extern int currLine;
-  extern int* currPos;
+  extern int num_lines;
+  extern int* num_column;
   FILE * yyin;
 %}
 
@@ -75,7 +75,7 @@
  prog_start:    functions { printf("prog_start -> functions\n"); }
         ;
 
- function:      FUNCTION IDENT SEMICOLON BEGIN_PARAMS declarations END_PARAMS BEGIN_LOCALS declarations END_LOCALS BEGIN_BODY statements END_BODY {printf("function -> FUNCTION IDENT SEMICOLON BEGIN_PARAMS declarations END_PARAMS BEGIN_LOCALS declarations END_LOCALS BEGIN_BODY statements END_BODY\n");}
+ function:      FUNCTION ident SEMICOLON BEGIN_PARAMS declarations END_PARAMS BEGIN_LOCALS declarations END_LOCALS BEGIN_BODY statements END_BODY {printf("function -> FUNCTION IDENT SEMICOLON BEGIN_PARAMS declarations END_PARAMS BEGIN_LOCALS declarations END_LOCALS BEGIN_BODY statements END_BODY\n");}
 
         ;
 
@@ -91,11 +91,11 @@
         | identifiers COLON ARRAY L_SQUARE_BRACKET NUMBER R_SQUARE_BRACKET OF INTEGER {printf("declaration -> identifiers\n");}
         ;
 
- identifiers: identifier {printf("identifiers -> ident\n");}
-        | identifier COMMA identifiers {printf("identifiers -> ident COMMA identifiers\n");}
+ identifiers: ident {printf("identifiers -> ident\n");}
+        | ident COMMA identifiers {printf("identifiers -> ident COMMA identifiers\n");}
         ;
 
- identifier: IDENT {printf("ident -> IDENT %s\n");}
+ ident: IDENT {printf("ident -> IDENT %s\n", $1);}
         ;
 
 
@@ -164,10 +164,10 @@ term: var {printf("term -> var\n");}
 	| SUB NUMBER {printf("term -> SUB NUMBER\n");}
 	| L_PAREN expression R_PAREN {printf("term -> L_PAREN expression R_PAREN\n");}
 	| SUB L_PAREN expression R_PAREN {printf("term -> SUB L_PAREN expression R_PAREN\n");}
-	| identifier L_PAREN expressions R_PAREN {printf("term -> identifier L_PAREN expressions R_PAREN\n");};
+	| ident L_PAREN expressions R_PAREN {printf("term -> identifier L_PAREN expressions R_PAREN\n");};
 
 var: identifier {printf("var -> identifier\n");}
-	| identifier L_SQUARE_BRACKET expression R_SQUARE_BRACKET {printf("var -> identifier L_SQUARE_BRACKET expression R_SQUARE_BRACKET\n");}
+	| ident L_SQUARE_BRACKET expression R_SQUARE_BRACKET {printf("var -> identifier L_SQUARE_BRACKET expression R_SQUARE_BRACKET\n");}
 	;
 
 vars: var {printf("vars -> var\n");}
@@ -187,5 +187,5 @@ int main(int argc, char **argv) {
 }
 
 void yyerror(const char *msg) {
-    printf("Error at line %d: %s \n", currLine, currPos, msg);
+    printf("Error at line %d: %s \n", num_lines, num_column, msg);
 }
