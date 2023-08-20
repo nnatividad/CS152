@@ -75,7 +75,7 @@
  prog_start:    functions { printf("prog_start -> functions\n"); }
         ;
 
- function:      FUNCTION identifier SEMICOLON BEGIN_PARAMS declarations END_PARAMS BEGIN_LOCALS declarations END_LOCALS BEGIN_BODY statements END_BODY {printf("function -> FUNCTION IDENT SEMICOLON BEGIN_PARAMS declarations END_PARAMS BEGIN_LOCALS declarations END_LOCALS BEGIN_BODY statements END_BODY\n", ident);}
+ function:      FUNCTION IDENT SEMICOLON BEGIN_PARAMS declarations END_PARAMS BEGIN_LOCALS declarations END_LOCALS BEGIN_BODY statements END_BODY {printf("function -> FUNCTION IDENT SEMICOLON BEGIN_PARAMS declarations END_PARAMS BEGIN_LOCALS declarations END_LOCALS BEGIN_BODY statements END_BODY\n");}
 
         ;
 
@@ -92,10 +92,10 @@
         ;
 
  identifiers: identifier {printf("identifiers -> ident\n");}
-        | identifier COMMA identifiers {printf("identifiers -> ident COMMA identifiers\n", ident);}
+        | identifier COMMA identifiers {printf("identifiers -> ident COMMA identifiers\n");}
         ;
 
- identifier: IDENT {printf("ident -> IDENT %s\n", ident);}
+ identifier: IDENT {printf("ident -> IDENT %s\n");}
         ;
 
 
