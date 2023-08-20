@@ -38,6 +38,8 @@
 %token ENDLOOP 
 %token CONTINUE 
 %token READ 
+%token FOR
+%token ENUM
 %token WRITE 
 %left OR
 %left AND
