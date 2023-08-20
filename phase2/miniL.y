@@ -4,7 +4,7 @@
   #include <stdlib.h>
   void yyerror(const char *msg);
   extern int currLine;
-  extern int currPos;
+  extern char* currPos;
   FILE * yyin;
 %}
 
@@ -32,15 +32,31 @@
 %token ELSE 
 %token WHILE 
 %token DO 
-%token FOR 
+%token FOREACH
+%token IN
 %token BEGINLOOP 
 %token ENDLOOP 
 %token CONTINUE 
 %token READ 
 %token WRITE 
+%left OR
+%left AND
+%right NOT
 %token TRUE 
 %token FALSE 
-%token ASSIGN 
+%token RETURN
+%left ASSIGN
+%left LT 
+%left LTE 
+%left GT 
+%left GTE 
+%left EQ 
+%left NEQ
+%left ADD 
+%left SUB
+%left MULT 
+%left DIV 
+%left MOD
 %token SEMICOLON 
 %token COLON 
 %token COMMA 
@@ -48,17 +64,8 @@
 %token R_PAREN 
 %token L_SQUARE_BRACKET 
 %token R_SQUARE_BRACKET 
-%token RETURN
 %token <id_val> IDENT
 %token <num_val> NUMBER
-%right ASSIGN
-%left OR
-%left AND
-%right NOT
-%left LT LTE GT GTE EQ NEQ
-%left ADD SUB
-%left MULT DIV MOD
-
 %locations
 
 /* %start program */
@@ -174,5 +181,5 @@ int main(int argc, char **argv) {
 }
 
 void yyerror(const char *msg) {
-    printf("Error at line %d: %s \n", currLine, currPos, msg);
+    printf("Error at line %d: %s \n", msg, currPos, currLine);
 }
