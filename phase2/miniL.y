@@ -95,7 +95,7 @@
         | ident COMMA identifiers {printf("identifiers -> IDENT COMMA identifiers\n", ident);}
         ;
 
- ident:        IDENT {printf("ident -> IDENT %s\n", $1);}
+ identifier:        IDENT {printf("ident -> IDENT %s\n", $1);}
         ;
 
 
@@ -166,7 +166,10 @@ term: var {printf("term -> var\n");}
 var: identifier {printf("var -> identifier\n");}
 	| identifier L_SQUARE_BRACKET expression R_SQUARE_BRACKET {printf("var -> identifier L_SQUARE_BRACKET expression R_SQUARE_BRACKET\n");}
 	;
-	
+
+vars: var {printf("vars -> var\n");}
+                 | var COMMA vars {printf("vars -> var COMMA vars\n");}
+	;
 %% 
 
 int main(int argc, char **argv) {
