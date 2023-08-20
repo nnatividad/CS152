@@ -75,7 +75,7 @@
  prog_start:    functions { printf("prog_start -> functions\n"); }
         ;
 
- function:      FUNCTION ident SEMICOLON BEGIN_PARAMS declarations END_PARAMS BEGIN_LOCALS declarations END_LOCALS BEGIN_BODY statements END_BODY {printf("function -> FUNCTION IDENT SEMICOLON BEGIN_PARAMS declarations END_PARAMS BEGIN_LOCALS declarations END_LOCALS BEGIN_BODY statements END_BODY\n", ident);}
+ function:      FUNCTION identifier SEMICOLON BEGIN_PARAMS declarations END_PARAMS BEGIN_LOCALS declarations END_LOCALS BEGIN_BODY statements END_BODY {printf("function -> FUNCTION IDENT SEMICOLON BEGIN_PARAMS declarations END_PARAMS BEGIN_LOCALS declarations END_LOCALS BEGIN_BODY statements END_BODY\n", ident);}
 
         ;
 
@@ -149,7 +149,7 @@ expressions: /*Epsilon*/ {printf("expressions -> Epsilon\n");}
 	| multiple_exp {printf("expressions -> multiple_exp\n");}
 	;
 
-multiplicative_expr: term {printf("multiplicative_exp -> term\n");}
+multiplicative_exp: term {printf("multiplicative_exp -> term\n");}
 	| term MULT multiplicative_exp {printf("multiplicative_exp -> term MULT multiplicative_exp\n");}
 	| term DIV multiplicative_exp {printf("multiplicative_exp -> term DIV multiplicative_exp\n");}
 	| term MOD multiplicative_exp {printf("multiplicative_exp -> term MOD multiplicative_exp\n");}
