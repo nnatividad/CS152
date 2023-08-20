@@ -4,7 +4,7 @@
   #include <stdlib.h>
   void yyerror(const char *msg);
   extern int currLine;
-  extern char* currPos;
+  extern int* currPos;
   FILE * yyin;
 %}
 
@@ -75,31 +75,31 @@
  prog_start:    functions { printf("prog_start -> functions\n"); }
         ;
 
- functions:    /*empty*/{printf("functions -> epsilon\n");}
-        | function functions {printf("functions -> function functions\n";}
-        ;
-
  function:      FUNCTION ident SEMICOLON BEGIN_PARAMS declarations END_PARAMS BEGIN_LOCALS declarations END_LOCALS BEGIN_BODY statements END_BODY {printf("function -> FUNCTION IDENT SEMICOLON BEGIN_PARAMS declarations END_PARAMS BEGIN_LOCALS declarations END_LOCALS BEGIN_BODY statements END_BODY\n", ident);}
 
+        ;
+
+ functions:    /*empty*/{printf("functions -> epsilon\n");}
+        | function functions {printf("functions -> function functions\n";}
         ;
 
  declarations:        /*empty*/ {printf("declarations -> epsilon\n");}
         | declaration SEMICOLON declarations {printf("declarations -> declaration SEMICOLON declarations\n");}
         ;
 
- declaration: identifiers COLON INTEGER {printf("declaration -> identifiers COLON INTEGER\n");}
+ declaration: identifiers COLON INTEGER {printf("declaration -> identifier COLON INTEGER\n");}
         | identifiers COLON ARRAY L_SQUARE_BRACKET NUMBER R_SQUARE_BRACKET OF INTEGER {printf("declaration -> identifiers\n");}
         ;
 
- identifiers:    ident {printf("identifiers -> indent\n");}
-        | ident COMMA identifiers {printf("identifiers -> IDENT COMMA identifiers\n", ident);}
+ identifiers: identifier {printf("identifiers -> ident\n");}
+        | identifier COMMA identifiers {printf("identifiers -> ident COMMA identifiers\n", ident);}
         ;
 
- identifier:        IDENT {printf("ident -> IDENT %s\n", $1);}
+ identifier: IDENT {printf("ident -> IDENT %s\n", ident);}
         ;
 
 
-statements:    /*empty*/ {printf("statements -> epsilon\n");}
+statements:    statement SEMICOLON {printf("statements -> statement SEMICOLON epsilon\n");}
         | statement SEMICOLON statements {printf("statements -> statement SEMICOLON statements\n");}
         ;
 
@@ -122,13 +122,14 @@ relation_and_exp: relation_exp {printf("relation_and_exp -> relation_exp\n");}
 	| relation_exp AND relation_and_exp {printf("relation_and_exp -> relation_exp AND relation_and_exp\n");}
 	;
 
-	relation_exp: expression comp expression {printf("relation_exp -> expression comp expression\n");}
+relation_exp: expression comp expression {printf("relation_exp -> expression comp expression\n");}
 	| NOT expression comp expression {printf("relation_exp -> NOT expression comp expression\n");}
 	| TRUE {printf("relation_exp -> TRUE\n");}
 	| NOT TRUE {printf("relation_exp -> NOT TRUE\n");}
 	| FALSE {printf("relation_exp -> FALSE\n");}
 	| NOT FALSE {printf("relation_exp -> NOT FALSE\n");}
 	| L_PAREN bool_exp R_PAREN {printf("relation exp -> L_PAREN bool_exp R_PAREN\n");}
+	| NOT L_PAREN bool_exp _PAREN {printf("relation_exp -> NOT L_PAREN bool_exp R_PAREN\n");}
 	;
 
 comp: EQ {printf("comp -> EQ\n");}
@@ -158,10 +159,12 @@ multiple_exp: expression {printf("multiple_exp -> expression\n");}
 	| expression COMMA multiple_exp {printf("multiple_exp -> expression COMMA multiple_exp\n");}
 	;
 term: var {printf("term -> var\n");}
+	| SUB var {printf("term -> SUB var\n");}
 	| NUMBER {printf("term -> NUMBER\n");}
+	| SUB NUMBER {printf("term -> SUB NUMBER\n");}
 	| L_PAREN expression R_PAREN {printf("term -> L_PAREN expression R_PAREN\n");}
-	| identifier L_PAREN expressions R_PAREN {printf("term -> identifier L_PAREN expressions R_PAREN\n");}
-	;
+	| SUB L_PAREN expression R_PAREN {printf("term -> SUB L_PAREN expression R_PAREN\n");}
+	| identifier L_PAREN expressions R_PAREN {printf("term -> identifier L_PAREN expressions R_PAREN\n");};
 
 var: identifier {printf("var -> identifier\n");}
 	| identifier L_SQUARE_BRACKET expression R_SQUARE_BRACKET {printf("var -> identifier L_SQUARE_BRACKET expression R_SQUARE_BRACKET\n");}
@@ -184,5 +187,5 @@ int main(int argc, char **argv) {
 }
 
 void yyerror(const char *msg) {
-    printf("Error at line %d: %s \n", msg, currPos, currLine);
+    printf("Error at line %d: %s \n", currLine, currPos, msg);
 }
