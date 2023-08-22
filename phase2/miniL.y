@@ -131,7 +131,7 @@ relation_exp: expression comp expression {printf("relation_exp -> expression com
 	| FALSE {printf("relation_exp -> FALSE\n");}
 	| NOT FALSE {printf("relation_exp -> NOT FALSE\n");}
 	| L_PAREN bool_exp R_PAREN {printf("relation exp -> L_PAREN bool_exp R_PAREN\n");}
-	| NOT L_PAREN bool_exp _PAREN {printf("relation_exp -> NOT L_PAREN bool_exp R_PAREN\n");}
+	| NOT L_PAREN bool_exp R_PAREN {printf("relation_exp -> NOT L_PAREN bool_exp R_PAREN\n");}
 	;
 
 comp: EQ {printf("comp -> EQ\n");}
@@ -168,7 +168,7 @@ term: var {printf("term -> var\n");}
 	| SUB L_PAREN expression R_PAREN {printf("term -> SUB L_PAREN expression R_PAREN\n");}
 	| ident L_PAREN expressions R_PAREN {printf("term -> identifier L_PAREN expressions R_PAREN\n");};
 
-var: identifier {printf("var -> identifier\n");}
+var: ident {printf("var -> identifier\n");}
 	| ident L_SQUARE_BRACKET expression R_SQUARE_BRACKET {printf("var -> identifier L_SQUARE_BRACKET expression R_SQUARE_BRACKET\n");}
 	;
 
