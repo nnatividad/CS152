@@ -4,7 +4,6 @@
    /* write your C code here for definitions of variables and including headers */
    #include "y.tab.h"
    int num_lines = 1, num_column = 1;
-%
 %}
    /* some common rules */
 DIGIT  [0-9]
