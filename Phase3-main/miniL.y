@@ -116,13 +116,112 @@ program: %empty
           printf(temp.c_str());
         }
         ;
-   declarations:        /*empty*/ {printf("declarations -> epsilon\n");}
-        | declaration SEMICOLON declarations {printf("declarations -> declaration SEMICOLON declarations\n");}
-        ;
+   declarations: declaration SEMICOLON declarations 
+      {
+        std::string temp;
+        temp.append($1.code);
+        temp.append($3.code);
+        $$.code = strdup(temp.c_str());
+        $$.place = strdup("");
+        }
+        | %empty
+        {
+          $$.place = strdup("");
+          $$.code = strdup("");
+      }
+      ;
 
- declaration: identifiers COLON INTEGER {printf("declaration -> identifier COLON INTEGER\n");}
-        | identifiers COLON ARRAY L_SQUARE_BRACKET NUMBER R_SQUARE_BRACKET OF INTEGER {printf("declaration -> identifiers\n");}
-        ;
+ declaration: identifiers COLON INTEGER 
+      {
+        int left = 0;
+        int right = 0;
+        std::string parse($1.place);
+        std::string temp; //used to build output
+        bool ex = false; //controls while loop
+
+        while(!ex){
+          right = parse.find("|", left);
+          temp.append(". ");
+          if (right == std::string::npos){
+            std::string ident = parse.substr(left, right);
+            if(reserved.find(ident) != reserved.end()){
+              printf("Identifier %s's name is a reserved worde.\n", ident.c_str());
+            }
+            if (funcs.find(ident) != funcs.end() || varTemp.find(ident) != varTemp.end()){
+               printf("Identifier %s is previosuly declared.\n", ident.c_str());
+            } else{
+              varTemp[ident] = ident;
+              arrSize[ident] = 1;
+            }
+            temp.append(ident);
+            ex = true;
+          }
+          else{
+            varTemp[ident] = ident;
+            arrSize[ident] = 1;
+          }
+          temp.append(ident);
+          left = right+1;
+        }
+        $$.code = strdup(temp.c_str());
+        $$.place = strdup("");
+        }
+        | identifiers COLON ARRAY L_SQUARE_BRACKET NUMBER R_SQUARE_BRACKET OF INTEGER 
+        {
+          int left = 0;
+          int right = 0;
+          std::string temp;
+          std::string parse($1.place);
+          bool ex = false;
+          while(!ex) {
+            right = parse.find("|", left);
+            temp.append(".[] ");
+            if (right == std::string::npos){
+              std::string ident = parse.substr(left,right);
+              if(reserved.find(ident) != reserved.end()){
+                printf("Identifier %s's name is a reserved word.\n", ident.c_str());
+              }
+              if (funcs.find(ident) != funcs.end() || varTemp.find(ident) != varTemp.end()){
+                printf("Identifier %s's name is previously declared. \n", ident.c_str());
+              }
+            } else{
+              if($5 <= 0){
+                printf("Declaring array ident %s of size <= 0.\n", ident.c_str());
+              }
+              varTemp[ident] = ident;
+              arrSizep[ident] = $5;
+            }
+            temp.append(ident);
+            ex = true;
+           else{
+            std::string ident = parse.substr(left, right - left);
+            if(reserved.find(ident) != reserved.end())
+              {
+                printf("Identifier %s's name is a reserved word.\n", ident.c_str());
+              }
+              if(funcs.find(ident) != funcs.end() || varTemp.find(ident) != varTemp.end())
+              {
+                printf("Identifier %s is previously declared.\n", ident.c_str());
+              }
+              else
+              {
+                if($5 <= 0){
+                   printf("Declaring array ident %s of size <= 0.\n", ident.c_str());
+                }
+                varTemp[ident] = ident;
+                arrSize[ident] = $5;
+              }
+              temp.append(ident);
+              left = right + 1;
+            }
+            temp.append(", ");
+            temp.append(std::to_string($5));
+            temp.append("\n");
+          }
+            $$.code = strdup(temp.c_str());
+            $$.place = strdup("");
+        }
+      ;
 
  identifiers: ident {printf("identifiers -> ident\n");}
         | ident COMMA identifiers {printf("identifiers -> ident COMMA identifiers\n");}
