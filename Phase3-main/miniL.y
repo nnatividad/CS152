@@ -48,9 +48,8 @@ std::string new_label();
 
 %error-verbose
 
-%token<int_val> DIGIT
 %start program
-%token <num_val> NUMBER
+%token <int_val> NUMBER
 %token <ident> IDENT
 %type <expression> function declarations declaration vars var expressions expression identifiers ident
 %type <expression> bool_exp relation_and_exp relation_exp relation_exp_inv comp multiple_exp  multiplicative_exp term
@@ -223,21 +222,94 @@ program: %empty
         }
       ;
 
- identifiers: ident {printf("identifiers -> ident\n");}
-        | ident COMMA identifiers {printf("identifiers -> ident COMMA identifiers\n");}
+ identifiers: ident 
+      {
+        if(funcs.find($1) != funcs.end()){
+          printf("function name %s already declared.\n", $1);
+        }
+        else{
+          funcs.insert($1);
+        }
+      $$.place = strdup($1);
+      $$.code = strdup("");      
+      }
+        | ident COMMA identifiers 
+        {
+          std::string temp;
+          temp.append($1.place);
+          temp.append("|");
+          temp.append($3.place);
+          $$.place = strdup(temp.c_str());
+          $$.code = strdup("");
+        }
         ;
 
- ident: IDENT {printf("ident -> IDENT %s\n", $1);}
+ ident: IDENT 
+      {
+        $$.place = strdup($1.place);
+        $$.code = strdup("");
+      }
         ;
 
 
-statements:    statement SEMICOLON {printf("statements -> statement SEMICOLON epsilon\n");}
-        | statement SEMICOLON statements {printf("statements -> statement SEMICOLON statements\n");}
+statements: statement SEMICOLON 
+      {
+        $$.code = strdup($1.place);
+      }
+        | statement SEMICOLON statements 
+          {
+            std::string temp;
+            temp.append($1.code);
+            temp.append($3.code);
+            $$.code = strdup(temp.c_str());
+          }
         ;
 
-statement: var ASSIGN expression {printf("statement -> var ASSIGN expression\n");}
-	| IF bool_exp THEN statements ENDIF {printf("statement -> IF bool_exp THEN statements ENDIF\n");}
-	| IF bool_exp THEN statements ELSE statements ENDIF {printf("statement -> IF bool_exp THEN statements ELSE statements ENDIF\n");}
+statement: var ASSIGN expression 
+  {
+    std::string temp;
+    temp.append($1.code);
+    temp.append($3.code);
+    std::string middle = $3.place;
+    if($1.arr && $3.arr){
+      temp += "[]= ";
+    } else if($1.arr){
+      temp += "[]= ";
+    } else if($3.arr){
+      temp += "[]= ";
+    } else{
+      temp += "= ";
+    }
+
+    temp.append($1.place);
+    temp.append(", ");
+    temp.append(middle);
+    temp += "\n";
+    $$.code = strdup(temp.c_str());
+  }
+	| IF bool_exp THEN statements ENDIF 
+  {
+    std:string ifS = new_label();
+    std::string after = new_label();
+    std::string temp;
+    temp.append($2.code);
+    temp = temp + "?:= " + ifS + ", " + $2.place + "\n";
+    temp = temp + ":= " + after + "\n";
+    temp = temp + ": " + ifS + "\n";
+    temp.append($4.code);
+    temp = temp + ": " + after + "\n";
+    $$.code = strdup(temp.c_str());
+  }
+	| IF bool_exp THEN statements ELSE statements ENDIF 
+  {
+    std::string ifS = new_label();
+    std::string after = new_label();
+    std::string temp;
+    temp.append($2.code);
+    temp = temp + "?:= " + ifS + ", " + $2.place + "\n";
+    temp.append($6.code);
+
+  }
 	| WHILE bool_exp BEGINLOOP statements ENDLOOP {printf("statement -> WHILE bool_exp BEINGLOOP statements ENDLOOP\n");}
 	| DO BEGINLOOP statements ENDLOOP WHILE bool_exp {printf("statement -> DO BEGINLOOP statements ENDLOOP WHILE bool_exp\n");}
    	| READ vars {printf("statement -> READ vars\n");}
@@ -311,6 +383,17 @@ vars: var {printf("vars -> var\n");}
 int main(int argc, char **argv) {
    yyparse();
    return 0;
+}
+
+std::string new_temp(){
+  std::string t = "t" + std::to_string(tempCount);
+  tempCount++;
+  return t;
+}
+std::string new_label(){
+  std::string l = "L" + std::to_string(labelCount);
+  labelCount++;
+  return l;
 }
 
 void yyerror(const char *msg) {
