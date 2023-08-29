@@ -310,12 +310,87 @@ statement: var ASSIGN expression
     temp.append($6.code);
 
   }
-	| WHILE bool_exp BEGINLOOP statements ENDLOOP {printf("statement -> WHILE bool_exp BEINGLOOP statements ENDLOOP\n");}
-	| DO BEGINLOOP statements ENDLOOP WHILE bool_exp {printf("statement -> DO BEGINLOOP statements ENDLOOP WHILE bool_exp\n");}
-   	| READ vars {printf("statement -> READ vars\n");}
-	| WRITE vars {printf("statement -> WRITE vars\n");}
-	| CONTINUE {printf("statement -> CONTINUE\n");}
-	| RETURN expression {printf("statement -> RETURN expression\n");}
+	| WHILE bool_exp BEGINLOOP statements ENDLOOP 
+  {
+    std::string temp;
+    std::string begin = new_label();
+    std::string inner = new_label();
+    std::string after = new_label();
+    std::string code = $4.code;
+    size_t pos = code.find("continue");
+    while(pos != std::string::npos){
+      code.replace(pos, 8, ":= "+begin);
+      pos = code.find("continue");
+    }
+     temp.append(": ");
+     temp += begin + "\n";
+     temp.append($2.code);
+     temp += "?:= " + inner + ", ";
+     temp.append($2.place);
+     temp.append("\n");
+     temp += ":= " + after + "\n";
+     temp += ": " + inner + "\n";
+     temp.append(code);
+     temp += ":= " + begin + "\n";
+     temp += ": " + after + "\n";
+     $$.code = strdup(temp.c_str());
+  }
+	| DO BEGINLOOP statements ENDLOOP WHILE bool_exp 
+  {
+    std::string temp;
+    std::string begin = new_label();
+    std::string condition = new_label();
+    std::string code = $3.code;
+    size_t pos = code.find("continue");
+    while(pos != std::string::npos){
+      code.replace(pos, 8, ":= "+condition);
+      pos = code.find("continue");
+    }
+    temp.append(": ");
+    temp += begin + "\n";
+    temp.append(code);
+    temp += ": " + condition + "\n";
+    temp.append($6.code);
+    temp += "?:= " + begin + ", ";
+    temp.append($6.place);
+    temp.append("\n");
+    $$.code = strdup(temp.c_str());
+  }
+  | READ vars 
+  {
+    std::string temp;
+    temp.append($2.code);
+    size_t pos = temp.find("|", 0);
+    while(pos != std::string::npos){
+      temp.replace(pos, 1, "<");
+      pos = temp.find("|", pos);
+    }
+    $$.code = strdup(temp.c_str());
+  }
+	| WRITE vars 
+  {
+    std::string temp;
+    temp.append($2.code);
+    size_t pos = temp.find("|", 0);
+    while(pos != std::string::npos){
+      temp.replace(pos, 1, ">");
+      pos = temp.find("|", pos);
+    }
+    $$.code = strdup(temp.c_str());
+  }
+	| CONTINUE 
+  {
+    $$.code = strdup(temp.c_str());
+  }
+	| RETURN expression 
+  {
+    std::string temp;
+    temp.append($2.code);
+    temp.append("ret ");
+    temp.append($2.place);
+    temp.append("\n");
+    $$.code = strdup(temp.c_str());
+  }
 	;
 
 bool_exp: relation_and_exp {printf("bool_exp -> relation_and_exp\n");}
