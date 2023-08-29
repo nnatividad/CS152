@@ -109,7 +109,7 @@ program: %empty
           temp.append($8.code);
           std::string statements = $11.code;
           if(statements.find("continue") != std::string::npos){
-            printf("ERROR: Continue outside loop in function %s\n", $s2.place);
+            printf("ERROR: Continue outside loop in function %s\n", $2.place);
           }
           temp.append(statements);
           temp.append("endfunc\n\n");
