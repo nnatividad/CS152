@@ -15,7 +15,7 @@ miniL-lex.cpp: miniL.lex miniL-parser.cpp
 	flex -o $@ $< 
 
 miniL-parser.cpp: miniL.y
-	bison -d -v -g -o $@ $<
+	bison -v -d --file-prefix=y miniL.y
 
 clean:
 	rm -f *.o miniL-lex.cpp miniL-parser.cpp miniL-parser.hpp stack.hh *.output *.dot miniL
