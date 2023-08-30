@@ -60,43 +60,41 @@ extern int yydebug;
     ENDIF = 270,
     ELSE = 271,
     WHILE = 272,
-    DO = 273,
-    FOREACH = 274,
-    IN = 275,
-    BEGINLOOP = 276,
-    ENDLOOP = 277,
-    CONTINUE = 278,
-    READ = 279,
-    FOR = 280,
-    ENUM = 281,
-    WRITE = 282,
-    OR = 283,
-    AND = 284,
-    NOT = 285,
-    TRUE = 286,
-    FALSE = 287,
-    RETURN = 288,
-    ASSIGN = 289,
-    LT = 290,
-    LTE = 291,
-    GT = 292,
-    GTE = 293,
-    EQ = 294,
-    NEQ = 295,
-    ADD = 296,
-    SUB = 297,
-    MULT = 298,
-    DIV = 299,
-    MOD = 300,
-    SEMICOLON = 301,
-    COLON = 302,
-    COMMA = 303,
-    L_PAREN = 304,
-    R_PAREN = 305,
-    L_SQUARE_BRACKET = 306,
-    R_SQUARE_BRACKET = 307,
-    IDENT = 308,
-    NUMBER = 309
+    FOR = 273,
+    DO = 274,
+    BEGINLOOP = 275,
+    ENDLOOP = 276,
+    CONTINUE = 277,
+    READ = 278,
+    WRITE = 279,
+    TRUE = 280,
+    FALSE = 281,
+    SEMICOLON = 282,
+    COLON = 283,
+    COMMA = 284,
+    L_PAREN = 285,
+    R_PAREN = 286,
+    L_SQUARE_BRACKET = 287,
+    R_SQUARE_BRACKET = 288,
+    RETURN = 289,
+    ENUM = 290,
+    IDENT = 291,
+    NUMBER = 292,
+    ASSIGN = 293,
+    OR = 294,
+    AND = 295,
+    NOT = 296,
+    LT = 297,
+    LTE = 298,
+    GT = 299,
+    GTE = 300,
+    EQ = 301,
+    NEQ = 302,
+    ADD = 303,
+    SUB = 304,
+    MULT = 305,
+    DIV = 306,
+    MOD = 307
   };
 #endif
 
@@ -105,12 +103,13 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 12 "miniL.y" /* yacc.c:1909  */
+#line 11 "miniL.y" /* yacc.c:1909  */
 
-  int num_val;
-  char* id_val;
+int num_val;
+char* id_val;
 
-#line 114 "y.tab.h" /* yacc.c:1909  */
+
+#line 113 "y.tab.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;
@@ -118,23 +117,9 @@ typedef union YYSTYPE YYSTYPE;
 # define YYSTYPE_IS_DECLARED 1
 #endif
 
-/* Location type.  */
-#if ! defined YYLTYPE && ! defined YYLTYPE_IS_DECLARED
-typedef struct YYLTYPE YYLTYPE;
-struct YYLTYPE
-{
-  int first_line;
-  int first_column;
-  int last_line;
-  int last_column;
-};
-# define YYLTYPE_IS_DECLARED 1
-# define YYLTYPE_IS_TRIVIAL 1
-#endif
-
 
 extern YYSTYPE yylval;
-extern YYLTYPE yylloc;
+
 int yyparse (void);
 
 #endif /* !YY_YY_Y_TAB_H_INCLUDED  */
