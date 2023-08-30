@@ -416,6 +416,7 @@ statement: var ASSIGN expression
 	         temp.append("\n");
 	         $$.code = strdup(temp.c_str());
 	      }
+        ;
 
 
 bool_exp: relation_and_exp {printf("bool_exp -> relation_and_exp\n");}
@@ -481,6 +482,12 @@ vars: var {printf("vars -> var\n");}
 %% 
 
 int main(int argc, char **argv) {
+  if (argc > 1) {
+        yyin = fopen(argv[1], "r");
+        if (yyin == NULL) {
+            printf("error: %s file error", argv[0]);
+        }
+    }
    yyparse();
    return 0;
 }
