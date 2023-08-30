@@ -487,5 +487,9 @@ std::string new_label(){
 }
 
 void yyerror(const char *msg) {
-    /* implement your error handling */
+     extern int yylineno;
+  extern char *yytext;
+
+  printf("%s on line %d at char %d at symbol \"%s\"\n", msg, yylineno, currPos, yytext);
+  exit(1);
 }
