@@ -18,9 +18,9 @@ std::map<std::string, int> arrSize;
 bool mainFunc = false;
 std::set<std::string> funcs;
 std::set<std::string> reserved{"NUMBER", "IDENT", "RETURN", "FUNCTION", "BEGIN_PARAMS", "END_PARAMS", "BEGIN_LOCALS", "END_LOCALS", 
-    "BEGIN_BODY", "END_BODY", "INTEGER", "ARRAY", "OF", "IF", "THEN", "ENDIF", "ELSE", "WHILE", "FOR", "DO", "BEGINLOOP", "ENDLOOP",
+    "BEGIN_BODY", "END_BODY", "INTEGER", "ARRAY", "ENUM", "OF", "IF", "THEN", "ENDIF", "ELSE", "WHILE", "FOR", "DO", "BEGINLOOP", "ENDLOOP",
     "CONTINUE", "READ", "WRITE", "TRUE", "FALSE", "SEMICOLON", "COLON", "COMMA", "L_PAREN", "R_PAREN", "L_SQUARE_BRACKET", 
-    "R_SQUARE_BRACKET", "ENUM", "ASSIGN", "OR", "AND", "NOT", "LT", "LTE", "GT", "GTE", "EQ", "NEQ", "ADD", "SUB", "MULT", "DIV", "MOD",
+    "R_SQUARE_BRACKET", "ASSIGN", "OR", "AND", "NOT", "LT", "LTE", "GT", "GTE", "EQ", "NEQ", "ADD", "SUB", "MULT", "DIV", "MOD",
     "function", "declaration", "declarations", "var", "vars", "expressions", "expression", "identifiers", "ident", "bool_exp", "relation_and_exp",
     "relation_exp", "comp", "multiplicative_exp", "multiple_exp", "statements", "statement", "term" };
 
@@ -51,17 +51,17 @@ std::string new_label();
 %start program
 %token <int_val> NUMBER
 %token <ident> IDENT
+%token ENUM
 %type <expression> function declarations declaration vars var expressions expression identifiers ident
 %type <expression> bool_exp relation_and_exp relation_exp comp multiple_exp multiplicative_exp term
 %type <statement> statement statements
 
 %token FUNCTION BEGIN_PARAMS END_PARAMS BEGIN_LOCALS END_LOCALS BEGIN_BODY END_BODY INTEGER ARRAY OF IF THEN ENDIF ELSE WHILE FOR DO BEGINLOOP ENDLOOP CONTINUE READ WRITE TRUE FALSE SEMICOLON COLON COMMA L_PAREN R_PAREN L_SQUARE_BRACKET R_SQUARE_BRACKET RETURN
-%token ENUM
-%left ASSIGN
+%right ASSIGN
 %left OR
 %left AND
 %right NOT
-%left LT LTE GT GTE EQ NEQ
+%left EQ NEQ LT LTE GT GTE
 %left ADD SUB
 %left MULT DIV MOD
 
@@ -285,131 +285,99 @@ statements: statement SEMICOLON statements
 
 statement: var ASSIGN expression
         {
-          std::string temp;
-          temp.append($1.code);
-          temp.append($3.code);
-          std::string newExp = $3.place;
-          temp.append("= ");
+        std::string temp;
+        temp.append($1.code);
+        temp.append($3.code);
+        std::string middle = $3.place;
+          if($1.arr && $3.arr){
+            temp += "[]= ";
+          } else if($1.arr){
+            temp += "[]= ";
+          }
+          else if($3.arr){
+            temp += "= ";
+          }
+          else{
+            temp += "= ";
+          }
           temp.append($1.place);
           temp.append(", ");
-          temp.append(newExp);
-          temp.append("\n");
-
+          temp.append(middle);
+          temp += "\n";
           $$.code = strdup(temp.c_str());
-          //$$.place = strdup(""); //has no member named place
         }
         | IF bool_exp THEN statements ENDIF
         {
+          std::string ifS = new_label();
+          std::string after = new_label();
           std::string temp;
-          std::string L1 = new_label(); //then
-          std::string L2 = new_label(); //endif
-
           temp.append($2.code);
-          temp.append("?:= ");
-          temp.append(L1);
-          temp.append(", ");
-          temp.append($2.place);
-          temp.append("\n");
-
+          temp = temp + "?:= " + ifS + ", " + $2.place + "\n";
+          temp = temp + ":= " + after + "\n";
+          temp = temp + ": " + ifS + "\n";
           temp.append($4.code);
-          temp.append(": ");
-          temp.append(L2);
-          temp.append("\n");
-
+          temp = temp + ": " + after + "\n";
           $$.code = strdup(temp.c_str());
-          //$$.place = strdup(""); ////has no member named place
         }
 	      | IF bool_exp THEN statements ELSE statements ENDIF
 	      {
-	        std::string temp;
-          std::string L1 = new_label(); //then
-          std::string L2 = new_label(); //else
-          std::string L3 = new_label(); //endif
-
+          std::string ifS = new_label();
+          std::string after = new_label();
+          std::string temp;
           temp.append($2.code);
-          temp.append("?:= ");
-          temp.append(L1);
-          temp.append(", ");
-          temp.append($2.place);
-          temp.append("\n");
-
+          temp = temp + "?:= " + ifS + ", " + $2.place + "\n";
           temp.append($6.code);
-          temp.append(":= ");
-          temp.append(L3);
-          temp.append("\n");
-
+          temp = temp + ":= " + after + "\n";
+          temp = temp + ": " + ifS + "\n";
           temp.append($4.code);
-          temp.append(": ");
-          temp.append(L2);
-          temp.append("\n");
-
+          temp = temp + ": " + after + "\n";
           $$.code = strdup(temp.c_str());
-          //$$.place = strdup(""); ////has no member named place
 	      }
 	      | WHILE bool_exp BEGINLOOP statements ENDLOOP
 	      {
 	        std::string temp;
-          std::string L1 = new_label(); //while
-          std::string L2 = new_label(); //beginloop
-          std::string L3 = new_label(); //endloop
-
-          std::string L4 = $4.code; //statements
-          size_t pos = temp.find("|", 0);
-          while(pos != std::string::npos)
-          {
-            L4.replace(pos, 0, "");
+          std::string begin = new_label();
+          std::string inner = new_label();
+          std::string after = new_label();
+          std::string code = $4.code;
+          size_t pos = code.find("continue");
+          while(pos != std::string::npos){
+            code.replace(pos, 8, ":= "+begin);
+            pos = code.find("continue");
           }
-
           temp.append(": ");
-          temp.append(L1); //begin while loop
-          temp.append("\n");
+          temp += begin + "\n";
           temp.append($2.code);
-          temp.append("?:= ");
-          temp.append(L2); //beginLoop
-          temp.append(", ");
+          temp += "?:= " + inner + ", ";
           temp.append($2.place);
           temp.append("\n");
-          temp.append(":= ");
-          temp.append(L3); //endLoop but not really
-          temp.append("\n: ");
-          temp.append(L2);
-          temp.append(", ");
-          temp.append(L4);
-          temp.append("\n");
-
+          temp += ":= " + after + "\n";
+          temp += ": " + inner + "\n";
+          temp.append(code);
+          temp += ":= " + begin + "\n";
+          temp += ": " + after + "\n";
           $$.code = strdup(temp.c_str());
-          //$$.place = strdup(""): ////has no member named place
 	      }
 	      | DO BEGINLOOP statements ENDLOOP WHILE bool_exp
 	      {
-	       std::string temp;
-         std::string L1 = new_label(); //beginLoop
-         std::string L2 = $3.code; // statements
-         std::string L3 = new_label(); //endLoop
-         std::string L4 = new_label(); //while
-
-         size_t pos = temp.find("|", 0);
-          while(pos != std::string::npos)
-          {
-            L4.replace(pos, 0, "");
+          std::string temp;
+          std::string begin = new_label();
+          std::string condition = new_label();
+          std::string code = $3.code;
+          size_t pos = code.find("continue");
+          while(pos != std::string::npos){
+            code.replace(pos, 8, ":= "+condition);
+            pos = code.find("continue");
           }
-
           temp.append(": ");
-          temp.append(L1); //beginLoop
-          temp.append("\n");
-          temp.append(L2);
-          temp.append(": ");
-          temp.append(L4); //while
-          temp.append("\n");
+          temp += begin + "\n";
+          temp.append(code);
+          temp += ": " + condition + "\n";
           temp.append($6.code);
-          temp.append("?:= ");
-          temp.append(L1); //beginLoop
-          temp.append(", ");
+          temp += "?:= " + begin + ", ";
           temp.append($6.place);
           temp.append("\n");
-
           $$.code = strdup(temp.c_str());
-          //$$.place = strdup(""); //has no member named place
 	      }
       	| READ vars
 	      {
