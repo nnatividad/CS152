@@ -22,7 +22,7 @@ std::set<std::string> reserved{"NUMBER", "IDENT", "RETURN", "FUNCTION", "BEGIN_P
     "CONTINUE", "READ", "WRITE", "TRUE", "FALSE", "SEMICOLON", "COLON", "COMMA", "L_PAREN", "R_PAREN", "L_SQUARE_BRACKET", 
     "R_SQUARE_BRACKET", "ASSIGN", "OR", "AND", "NOT", "LT", "LTE", "GT", "GTE", "EQ", "NEQ", "ADD", "SUB", "MULT", "DIV", "MOD",
     "function", "declaration", "declarations", "var", "vars", "expressions", "expression", "identifiers", "ident", "bool_exp", "relation_and_exp",
-    "relation_exp", "comp", "multiplicative_exp", "multiple_exp", "statements", "statement", "term" };
+    "relation_exp", "comp", "mult_exp", "statements", "statement", "term" };
 
 void yyerror(const char *msg);
 extern int yylex();
