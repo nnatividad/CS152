@@ -2,6 +2,8 @@
    
 %{   
    /* write your C code here for definitions of variables and including headers */
+   #include "miniL-parser.hpp"
+   #include <string> 
    #include "y.tab.h"
    int num_lines = 1, num_column = 1;
 %}
@@ -81,6 +83,7 @@ return         {return RETURN; num_column += yyleng;}
 {E_ID_1}          {printf("Error at line %d, column %d: identifier \"%s\" must begin with a letter\n", num_lines, num_column, yytext); exit(-1);}
 
 
-
+int yyparse();
+int yylex();
 %%
 	/* C functions used in lexer */
