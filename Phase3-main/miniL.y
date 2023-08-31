@@ -52,7 +52,7 @@ std::string new_label();
 %token <int_val> NUMBER
 %token <ident> IDENT
 %token ENUM
-%type <expression> function declarations declaration vars var expressions expression identifiers ident
+%type <expression> function FuncIdent declarations declaration vars var expressions expression identifiers ident
 %type <expression> bool_exp relation_and_exp relation_and_exp_inv relation_exp comp multiplicative_exp term
 %type <statement> statement statements
 
@@ -80,7 +80,7 @@ program: %empty
         { 
         }
         ;
-function: FUNCTION ident SEMICOLON BEGIN_PARAMS declarations END_PARAMS BEGIN_LOCALS declarations END_LOCALS BEGIN_BODY statements END_BODY
+function: FUNCTION FuncIdent SEMICOLON BEGIN_PARAMS declarations END_PARAMS BEGIN_LOCALS declarations END_LOCALS BEGIN_BODY statements END_BODY
         {
           std::string temp = "func ";
           temp.append($2.place);
@@ -178,10 +178,11 @@ declaration: identifiers COLON INTEGER
                 varTemp[ident] = ident;
                 arrSize[ident] = 1;
               }
-
+              temp.append(ident);
+              left = right + 1;
             }
+            temp.append("\n");
           }
-
           $$.code = strdup(temp.c_str());
           $$.place = strdup("");
         }
@@ -244,6 +245,17 @@ declaration: identifiers COLON INTEGER
           $$.place = strdup("");
         }
         ;
+
+FuncIdent: IDENT
+{
+  if(funcs.find($1) != funcs.end()){
+    printf("function name %s already declared.\n", $1);
+  } else{
+    funcs.insert($1);
+  }
+  $$.place = strdup($1);
+  $$.code = strdup("");
+}
 
 identifiers: ident
         {
