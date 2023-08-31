@@ -83,7 +83,5 @@ return         {return RETURN; num_column += yyleng;}
 {E_ID_1}          {printf("Error at line %d, column %d: identifier \"%s\" must begin with a letter\n", num_lines, num_column, yytext); exit(-1);}
 
 
-int yyparse();
-int yylex();
 %%
 	/* C functions used in lexer */
