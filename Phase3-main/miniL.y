@@ -115,6 +115,7 @@ function: FUNCTION FuncIdent SEMICOLON BEGIN_PARAMS declarations END_PARAMS BEGI
 
           temp.append(statements);
           temp.append("endfunc\n\n");
+          printf(temp.c_str());
         };
 
 declarations: declaration SEMICOLON declarations
