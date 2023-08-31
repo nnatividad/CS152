@@ -196,7 +196,7 @@ declaration: identifiers COLON INTEGER
 
           if ($5 <= 0)
           {
-            printf("Invalid array size.\n");
+            printf("Declaring array ident arr of size <= 0\n");
             ex = true;
           }
           while(!ex)

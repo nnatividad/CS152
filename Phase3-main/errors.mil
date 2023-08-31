@@ -1,0 +1,8 @@
+Identifier ENDIF's name is a reserved word.
+Identifier n is previosuly declared.
+Identifier m is previosuly declared.
+Declaring array ident arr of size <= 0
+Identifier l is not declared.
+Provided index for non-array Identifier fib_n.
+Calling undeclared function fibonacci.
+Provided index for non-array Identifier n.
