@@ -14,7 +14,7 @@ E_ID_2 [a-zA-Z][a-zA-Z0-9_]*[_]
 
 %%
    /* specific lexer rules in regex */
-{DIGIT}+       {yylval.num_val = atoi(yytext); num_column += yyleng; return NUMBER;}
+{DIGIT}+       {yylval.int_val = atoi(yytext); num_column += yyleng; return NUMBER;}
 
 function       {return FUNCTION; num_column += yyleng;}
 beginparams    {return BEGIN_PARAMS; num_column += yyleng;}
@@ -75,10 +75,11 @@ return         {return RETURN; num_column += yyleng;}
 <<EOF>>        {exit(0);}
 
 {E_ID_2}       {printf("Error at line %d, column %d: identifier \"%s\" cannot end with an underscore\n", num_lines, num_column, yytext); exit(-1);}
-{ID}+          {yylval.id_val = strdup(yytext); num_column += yyleng; return IDENT;}
+{ID}+          {yylval.ident = strdup(yytext); num_column += yyleng; return IDENT;}
 
 .                 {printf("Error at line %d, column %d: unrecognized symbol \"%s\"\n", num_lines, num_column, yytext); exit(-1);}
 {E_ID_1}          {printf("Error at line %d, column %d: identifier \"%s\" must begin with a letter\n", num_lines, num_column, yytext); exit(-1);}
+
 
 
 %%
