@@ -2,8 +2,6 @@
    
 %{   
    /* write your C code here for definitions of variables and including headers */
-   #include "miniL-parser.hpp"
-   #include <string> 
    #include "y.tab.h"
    int num_lines = 1, num_column = 1;
 %}
