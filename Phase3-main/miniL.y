@@ -193,16 +193,10 @@ declaration: identifiers COLON INTEGER
           std::string temp;
           std::string parse($1.place);
           bool ex = false;
-
-          if ($5 <= 0)
-          {
-            printf("Declaring array ident arr of size <= 0\n");
-            ex = true;
-          }
           while(!ex)
           {
             right = parse.find("|", left);
-            temp.append(". ");
+            temp.append(".[] ");
             if(right == std::string::npos)
             {
               std::string ident = parse.substr(left, right);
@@ -216,8 +210,11 @@ declaration: identifiers COLON INTEGER
               }
               else
               {
+                if($5 <= 0){
+                  printf("Declaring array ident %s of size <= 0.\n", ident.c_str());
+                }
                 varTemp[ident] = ident;
-                arrSize[ident] = 1;
+                arrSize[ident] = $5;
               }
               temp.append(ident);
               ex = true;
@@ -236,11 +233,15 @@ declaration: identifiers COLON INTEGER
               else
               {
                 varTemp[ident] = ident;
-                arrSize[ident] = 1;
+                arrSize[ident] = $5;
               }
+              temp.append(ident);
+              left = right + 1;
             }
+              temp.append(", ");
+              temp.append(std::to_string($5));
+              temp.append("\n");
           }
-
           $$.code = strdup(temp.c_str());
           $$.place = strdup("");
         }
