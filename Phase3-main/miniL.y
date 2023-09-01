@@ -52,7 +52,7 @@ std::string new_label();
 %token <int_val> NUMBER
 %token <ident> IDENT
 %token ENUM
-%type <expression> function declarations declaration vars var expressions expression identifiers ident
+%type <expression> function FuncIdent declarations declaration vars var expressions expression identifiers ident
 %type <expression> bool_exp relation_and_exp relation_and_exp_inv relation_exp comp multiplicative_exp term
 %type <statement> statement statements
 
@@ -80,7 +80,7 @@ program: %empty
         { 
         }
         ;
-function: FUNCTION ident SEMICOLON BEGIN_PARAMS declarations END_PARAMS BEGIN_LOCALS declarations END_LOCALS BEGIN_BODY statements END_BODY
+function: FUNCTION FuncIdent SEMICOLON BEGIN_PARAMS declarations END_PARAMS BEGIN_LOCALS declarations END_LOCALS BEGIN_BODY statements END_BODY
         {
           std::string temp = "func ";
           temp.append($2.place);
@@ -115,6 +115,7 @@ function: FUNCTION ident SEMICOLON BEGIN_PARAMS declarations END_PARAMS BEGIN_LO
 
           temp.append(statements);
           temp.append("endfunc\n\n");
+          printf(temp.c_str());
         };
 
 declarations: declaration SEMICOLON declarations
@@ -178,10 +179,11 @@ declaration: identifiers COLON INTEGER
                 varTemp[ident] = ident;
                 arrSize[ident] = 1;
               }
-
+              temp.append(ident);
+              left = right + 1;
             }
+            temp.append("\n");
           }
-
           $$.code = strdup(temp.c_str());
           $$.place = strdup("");
         }
@@ -192,16 +194,10 @@ declaration: identifiers COLON INTEGER
           std::string temp;
           std::string parse($1.place);
           bool ex = false;
-
-          if ($5 <= 0)
-          {
-            printf("Invalid array size.\n");
-            ex = true;
-          }
           while(!ex)
           {
             right = parse.find("|", left);
-            temp.append(". ");
+            temp.append(".[] ");
             if(right == std::string::npos)
             {
               std::string ident = parse.substr(left, right);
@@ -215,8 +211,11 @@ declaration: identifiers COLON INTEGER
               }
               else
               {
+                if($5 <= 0){
+                  printf("Declaring array ident %s of size <= 0.\n", ident.c_str());
+                }
                 varTemp[ident] = ident;
-                arrSize[ident] = 1;
+                arrSize[ident] = $5;
               }
               temp.append(ident);
               ex = true;
@@ -235,15 +234,30 @@ declaration: identifiers COLON INTEGER
               else
               {
                 varTemp[ident] = ident;
-                arrSize[ident] = 1;
+                arrSize[ident] = $5;
               }
+              temp.append(ident);
+              left = right + 1;
             }
+              temp.append(", ");
+              temp.append(std::to_string($5));
+              temp.append("\n");
           }
-
           $$.code = strdup(temp.c_str());
           $$.place = strdup("");
         }
         ;
+
+FuncIdent: IDENT
+{
+  if(funcs.find($1) != funcs.end()){
+    printf("function name %s already declared.\n", $1);
+  } else{
+    funcs.insert($1);
+  }
+  $$.place = strdup($1);
+  $$.code = strdup("");
+}
 
 identifiers: ident
         {
@@ -772,7 +786,7 @@ term: var  {
           }
           std::string dst = new_temp();
           temp.append($3.code);
-          temp += ". " + dst + "\ncall";
+          temp += ". " + dst + "\ncall ";
           temp.append($1.place);
           temp += ", " + dst + "\n";
           $$.code = strdup(temp.c_str());
