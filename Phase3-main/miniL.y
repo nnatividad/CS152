@@ -786,7 +786,7 @@ term: var  {
           }
           std::string dst = new_temp();
           temp.append($3.code);
-          temp += ". " + dst + "\ncall";
+          temp += ". " + dst + "\ncall ";
           temp.append($1.place);
           temp += ", " + dst + "\n";
           $$.code = strdup(temp.c_str());
