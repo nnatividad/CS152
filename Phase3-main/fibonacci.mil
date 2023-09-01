@@ -51,7 +51,7 @@ func main
 = t13, n
 param t13
 . t14
-callfibonacci, t14
+call fibonacci, t14
 = fib_n, t14
 .> fib_n
 endfunc
